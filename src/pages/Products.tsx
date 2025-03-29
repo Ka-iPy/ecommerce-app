@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 
 const products = [
   {
@@ -54,17 +55,36 @@ const products = [
 const categories = ['All', 'Electronics', 'Accessories', 'Sports', 'Home']
 
 export default function Products() {
+  const [searchParams] = useSearchParams()
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
+  useEffect(() => {
+    const categoryParam = searchParams.get('category')
+    if (categoryParam && categories.includes(categoryParam)) {
+      setSelectedCategory(categoryParam)
+    }
+  }, [searchParams])
+
+  const filteredProducts = selectedCategory === 'All'
+    ? products
+    : products.filter(product => product.category === selectedCategory)
+
   return (
-    <div className="bg-white">
+    <div>
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-bold tracking-tight text-gray-900">All Products</h2>
+        <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">All Products</h2>
         
         {/* Categories */}
         <div className="mt-6 flex space-x-4">
           {categories.map((category) => (
             <button
               key={category}
-              className="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200"
+              onClick={() => setSelectedCategory(category)}
+              className={`rounded-md px-3 py-2 text-sm font-medium ${
+                selectedCategory === category
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+              }`}
             >
               {category}
             </button>
@@ -73,9 +93,9 @@ export default function Products() {
 
         {/* Products Grid */}
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-          {products.map((product) => (
+          {filteredProducts.map((product) => (
             <div key={product.id} className="group relative">
-              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200">
+              <div className="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
                 <img
                   src={product.image}
                   alt={product.name}
@@ -84,16 +104,16 @@ export default function Products() {
               </div>
               <div className="mt-4 flex justify-between">
                 <div>
-                  <h3 className="text-sm text-gray-700">
+                  <h3 className="text-sm text-gray-700 dark:text-gray-200">
                     <Link to={`/products/${product.id}`}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {product.name}
                     </Link>
                   </h3>
-                  <p className="mt-1 text-sm text-gray-500">{product.description}</p>
-                  <p className="mt-1 text-xs text-gray-400">{product.category}</p>
+                  <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{product.description}</p>
+                  <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{product.category}</p>
                 </div>
-                <p className="text-sm font-medium text-gray-900">${product.price}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">${product.price}</p>
               </div>
             </div>
           ))}

@@ -4,21 +4,22 @@ import Home from './pages/Home'
 import Products from './pages/Products'
 import Categories from './pages/Categories'
 import About from './pages/About'
-import ProductDetail from './pages/ProductDetail'
+import { ThemeProvider } from './context/ThemeContext'
 
 function App() {
   return (
-    <Router>
-      <Layout>
+    <ThemeProvider>
+      <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/products/:id" element={<ProductDetail />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="products" element={<Products />} />
+            <Route path="categories" element={<Categories />} />
+            <Route path="about" element={<About />} />
+          </Route>
         </Routes>
-      </Layout>
-    </Router>
+      </Router>
+    </ThemeProvider>
   )
 }
 
